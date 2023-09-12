@@ -1,5 +1,6 @@
 # https://hub.docker.com/_/debian
 FROM debian:bookworm
+MAINTAINER jan@tomasek.cz
 ENV DEBIAN_FRONTEND=noninteractive
 
 # add proper Debian sources
