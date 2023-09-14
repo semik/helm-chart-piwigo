@@ -22,12 +22,19 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- if not .Values.ingress.annotations }}
+  annotations:
+  {{- end }}
+    {{- if index .Values.ingress.tls 0 }}
+    cert-manager.io/cluster-issuer: {{ index .Values.ingress.tls 0 "clusterIssuer" }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
 spec:
-  defaultBackend:
-    service:
-      name: {{ include "piwigo.fullname" . }}
-      port:
-        number: 80
+#  defaultBackend:
+#    service:
+#      name: {{ include "piwigo.fullname" . }}
+#      port:
+#        number: 80
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
