@@ -10,6 +10,13 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "0.1"
 
+mariadb:
+  initImage: debian:bookworm
+  image: bitnami/mariadb:10.6.15
+  user: piwigo
+  password: super-secret-password
+  database: piwigo
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

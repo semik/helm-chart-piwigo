@@ -27,6 +27,26 @@ spec:
       serviceAccountName: {{ include "piwigo.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        # bitnami/mariadb creates socket inside
+        #       /opt/bitnami/mariadb/tmp/ named mysql.sock
+        # Debian expect it in directory
+        #       /run/mysqld named mysqld.sock (note mysql.sock != mysqld.sock)
+        # this init containers prepares link (to possibly non existent socket)
+        # in shared volume 'mariadb-socket'
+        - name: create-mysqld
+          image: {{ .Values.mariadb.initImage }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cd /run/mysqld/
+              ln -sf mysql.sock mysqld.sock
+              ls -la
+          volumeMounts:
+          - name: mariadb-socket
+            mountPath: /run/mysqld/
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -47,6 +67,26 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          # standard Debian location
+          volumeMounts:
+          - name: mariadb-socket
+            mountPath: /run/mysqld/
+        - name: mariadb
+          image: {{ .Values.mariadb.image }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              value: {{ .Values.mariadb.password }}
+            - name: MARIADB_USER
+              value: {{ .Values.mariadb.user }}
+            - name: MARIADB_PASSWORD
+              value: {{ .Values.mariadb.password }}
+            - name: MARIADB_DATABASE
+              value: {{ .Values.mariadb.database }}
+          # custom bitnami/mariadb socket path `find / -type s``
+          volumeMounts:
+          - name: mariadb-socket
+            mountPath: /opt/bitnami/mariadb/tmp/
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -59,3 +99,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - emptyDir: {}
+          name: mariadb-socket
