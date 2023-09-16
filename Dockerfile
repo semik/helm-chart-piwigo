@@ -5,6 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # add proper Debian sources
 COPY conf/bookworm.sources.list /etc/apt/sources.list
+COPY conf/entry.sh /
 
 RUN rm /etc/apt/sources.list.d/debian.sources && \
     apt update && \
@@ -34,4 +35,4 @@ RUN apt install -y bash
 COPY conf/000-default.conf /etc/apache2/sites-available/
 
 EXPOSE 80
-CMD apachectl -D FOREGROUND
+CMD /entry.sh
