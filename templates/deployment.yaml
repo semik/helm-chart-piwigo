@@ -87,6 +87,9 @@ spec:
           volumeMounts:
           - name: mariadb-socket
             mountPath: /opt/bitnami/mariadb/tmp/
+            # path where to mount database directory is in docs of image https://hub.docker.com/r/bitnami/mariadb
+          - name: mariadb-persist-db
+            mountPath: /bitnami/mariadb
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -102,3 +105,6 @@ spec:
       volumes:
         - emptyDir: {}
           name: mariadb-socket
+        - name: mariadb-persist-db
+          persistentVolumeClaim:
+            claimName: piwigo-mariadb-persist-db-claim

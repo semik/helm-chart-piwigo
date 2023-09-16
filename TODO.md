@@ -3,6 +3,7 @@
 - [x] Prepare docker image with Apache2 + php7.4 and piwigo 13.8.0
   - [x] Reduce number of layers (RUN/COPY calls)
   - [ ] Use staged build to extract ZIP image and do not install curl into primary image
+  - [ ] Make Apache to log to STDOUT to get logs in K8s
 - [x] Prepare helm chart to install deployment with that image
   - [x] Define ingress
     - [x] HTTP only
