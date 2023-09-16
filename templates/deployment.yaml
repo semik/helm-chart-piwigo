@@ -71,6 +71,8 @@ spec:
           volumeMounts:
           - name: mariadb-socket
             mountPath: /run/mysqld/
+          - name: piwigo-presist-data
+            mountPath: /persist-data
         - name: mariadb
           image: {{ .Values.mariadb.image }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -108,3 +110,6 @@ spec:
         - name: mariadb-persist-db
           persistentVolumeClaim:
             claimName: piwigo-mariadb-persist-db-claim
+        - name: piwigo-presist-data
+          persistentVolumeClaim:
+            claimName: piwigo-persist-config-claim

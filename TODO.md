@@ -11,6 +11,7 @@
     - [x] HTTPS with provided cert from Semik CA
     - [x] HTTPS with Let's Encrypt
   - [ ] Mount there a config {{ piwigo_root }}/piwigo/local/config/database.inc.php (to get rid of default login page)
+    - [ ] Provide some initial config??
   - [x] Provide it with database and let it communicate via UNIX SOCKET
 - [ ] Provide it with folder with photos
 
