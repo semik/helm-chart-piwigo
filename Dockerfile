@@ -17,7 +17,7 @@ RUN rm /etc/apt/sources.list.d/debian.sources && \
 RUN curl https://packages.sury.org/php/apt.gpg -o /usr/share/keyrings/deb.sury.org-php.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php.list && \
     apt update && \
-    apt install -y libapache2-mod-php7.4 php7.4-gd php7.4-mbstring php7.4-mysql && \
+    apt install -y libapache2-mod-php7.4 php7.4-gd php7.4-mbstring php7.4-mysql php7.4-xml graphicsmagick-imagemagick-compat && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /usr/share/locale/*
 
