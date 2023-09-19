@@ -27,7 +27,10 @@ RUN curl "https://piwigo.org/download/dlcounter.php?code=13.8.0" -o /tmp/piwigo.
     unzip /tmp/piwigo.zip && \
     rm /tmp/piwigo.zip && \
     rm -rf html && \
-    mv piwigo html
+    mv piwigo html && \
+    cd html && \
+    mkdir /piwigo-init-data && \
+    cp -r  galleries upload plugins themes template-extension local _data /piwigo-init-data/
 
 # remove for production
 RUN apt install -y bash
