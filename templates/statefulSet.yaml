@@ -28,8 +28,15 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
-        # bitnami/mariadb creates socket inside
+        # When mysql client connects to localhost, it automaticaly uses
+        # UNIX Socket with path configured in config file. Different systems are
+        # using different paths AND filenames. In production you can bypass this
+        # by specifing IP '127.0.0.1' instead of 'localhost'. In this chart
+        # I use it for initContainers example.
+        #
+        # Image bitnami/mariadb creates socket inside
         #       /opt/bitnami/mariadb/tmp/ named mysql.sock
+        #
         # Debian expect it in directory
         #       /run/mysqld named mysqld.sock (note mysql.sock != mysqld.sock)
         # this init containers prepares link (to possibly non existent socket)
@@ -67,11 +74,13 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          # standard Debian location
           volumeMounts:
+          # UNIX Socket for interprocess communication
           - name: mariadb-socket
             mountPath: /run/mysqld/
-            # galleries upload plugins themes template-extension local _data
+          # Piwigo writes into following directories, they has
+          # to be preserved:
+          #   galleries upload plugins themes template-extension local _data
           - name: piwigo-presist-data
             mountPath: /var/www/html/galleries
             subPath: galleries
