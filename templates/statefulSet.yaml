@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "piwigo.fullname" . }}
   labels:
@@ -71,8 +71,28 @@ spec:
           volumeMounts:
           - name: mariadb-socket
             mountPath: /run/mysqld/
+            # galleries upload plugins themes template-extension local _data
           - name: piwigo-presist-data
-            mountPath: /persist-data
+            mountPath: /var/www/html/galleries
+            subPath: galleries
+          - name: piwigo-presist-data
+            mountPath: /var/www/html/upload
+            subPath: upload
+          - name: piwigo-presist-data
+            mountPath: /var/www/html/plugins
+            subPath: plugins
+          - name: piwigo-presist-data
+            mountPath: /var/www/html/themes
+            subPath: themes
+          - name: piwigo-presist-data
+            mountPath: /var/www/html/template-extension
+            subPath: template-extension
+          - name: piwigo-presist-data
+            mountPath: /var/www/html/local
+            subPath: local
+          - name: piwigo-presist-data
+            mountPath: /var/www/html/_data
+            subPath: _data
         - name: mariadb
           image: {{ .Values.mariadb.image }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -107,9 +127,18 @@ spec:
       volumes:
         - emptyDir: {}
           name: mariadb-socket
-        - name: mariadb-persist-db
-          persistentVolumeClaim:
-            claimName: piwigo-mariadb-persist-db-claim
-        - name: piwigo-presist-data
-          persistentVolumeClaim:
-            claimName: piwigo-persist-config-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: mariadb-persist-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 64Mi
+  - metadata:
+      name: piwigo-presist-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
